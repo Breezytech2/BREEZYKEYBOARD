@@ -1,0 +1,385 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* Glassmorphism custom scrollbar overrides */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.glass-morphic {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-morphic-dark {
+  background: rgba(10, 11, 15, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-morphic-accent {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes neonRainbowPulse {
+  0% {
+    box-shadow: 0 0 25px rgba(168, 85, 247, 0.7), inset 0 0 15px rgba(168, 85, 247, 0.5);
+    border-color: rgba(168, 85, 247, 0.9);
+  }
+  33% {
+    box-shadow: 0 0 25px rgba(134, 239, 172, 0.7), inset 0 0 15px rgba(134, 239, 172, 0.5);
+    border-color: rgba(134, 239, 172, 0.9);
+  }
+  66% {
+    box-shadow: 0 0 25px rgba(96, 165, 250, 0.7), inset 0 0 15px rgba(96, 165, 250, 0.5);
+    border-color: rgba(96, 165, 250, 0.9);
+  }
+  100% {
+    box-shadow: 0 0 25px rgba(236, 72, 153, 0.7), inset 0 0 15px rgba(236, 72, 153, 0.5);
+    border-color: rgba(236, 72, 153, 0.9);
+  }
+}
+
+/* Glass neon click glow */
+.glass-morphic:active,
+.glass-morphic-dark:active,
+.glass-morphic-accent:active {
+  animation: neonRainbowPulse 1s linear infinite !important;
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  transition: all 0.05s ease !important;
+}
+
+/* More specific active glow for buttons in the keyboard */
+.breezy_keyboard_container button:active {
+  animation: neonRainbowPulse 0.5s linear infinite !important;
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  transition: all 0.05s ease !important;
+}
+
+/* -------------------------------------------------------------------------
+   PREMIUM MECHANICAL KEYBOARD DESIGN SYSTEM
+   ------------------------------------------------------------------------- */
+
+/* Transparent Acrylic/Glass Keycap Base with Visible Depth */
+.mechanical-keycap {
+  position: relative;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+  backdrop-filter: blur(16px) saturate(220%);
+  -webkit-backdrop-filter: blur(16px) saturate(220%);
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  /* Multi-layered light refraction, realistic thick bevel, inner & outer shadows */
+  box-shadow: 
+    inset 0 1.5px 0.5px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.35);
+  transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1);
+  overflow: hidden;
+}
+
+/* Hover style: glows brighter with glossy highlight shift */
+.mechanical-keycap:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1.5px) scale(1.02);
+  filter: brightness(1.2);
+}
+
+/* Press style: tactile spring mechanical response */
+.mechanical-keycap:active {
+  transform: translateY(2px) scale(0.93) !important;
+  box-shadow: 
+    inset 0 3px 5px rgba(0, 0, 0, 0.6),
+    0 1px 2px rgba(255, 255, 255, 0.25) !important;
+  filter: brightness(0.95);
+}
+
+/* Visible Internal Mechanical Switch Stem Detail with Switch Housing Glow */
+.mechanical-switch-stem {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Internal "+" mechanical cherry-mx switch stem core detail */
+.mechanical-switch-stem::before,
+.mechanical-switch-stem::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.3);
+}
+.mechanical-switch-stem::before {
+  width: 2px;
+  height: 8px;
+}
+.mechanical-switch-stem::after {
+  width: 8px;
+  height: 2px;
+}
+
+/* Glassy top gloss, reflections, and gorgeous light-catching curve highlight */
+.mechanical-keycap-glass-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  border-radius: 9px 9px 0 0;
+  z-index: 2;
+}
+
+/* Frosted glass internal borders to accent 3D keycap depth */
+.mechanical-keycap-frosted-edges {
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 8.5px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* --- SUPER VIBRANT HIGH-INTENSITY RGB LED GLOWS (+70% BRIGHTER WITH EXTRA BLOOM) --- */
+@keyframes neonGlowCyan {
+  0%, 100% {
+    box-shadow: 
+      inset 0 0 12px rgba(0, 229, 255, 0.55),
+      inset 0 1px 1px rgba(255, 255, 255, 0.55),
+      0 0 10px rgba(0, 229, 255, 0.45),
+      0 0 20px rgba(0, 229, 255, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(0, 229, 255, 0.6);
+    background: rgba(0, 229, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      inset 0 0 20px rgba(0, 229, 255, 0.8),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.65),
+      0 0 18px rgba(0, 229, 255, 0.75),
+      0 0 35px rgba(0, 229, 255, 0.45),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(0, 229, 255, 0.9);
+    background: rgba(0, 229, 255, 0.18);
+  }
+}
+
+@keyframes neonGlowBlue {
+  0%, 100% {
+    box-shadow: 
+      inset 0 0 12px rgba(77, 91, 255, 0.55),
+      inset 0 1px 1px rgba(255, 255, 255, 0.55),
+      0 0 10px rgba(77, 91, 255, 0.45),
+      0 0 20px rgba(77, 91, 255, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(77, 91, 255, 0.6);
+    background: rgba(77, 91, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      inset 0 0 20px rgba(77, 91, 255, 0.8),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.65),
+      0 0 18px rgba(77, 91, 255, 0.75),
+      0 0 35px rgba(77, 91, 255, 0.45),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(77, 91, 255, 0.9);
+    background: rgba(77, 91, 255, 0.18);
+  }
+}
+
+@keyframes neonGlowPurple {
+  0%, 100% {
+    box-shadow: 
+      inset 0 0 12px rgba(138, 43, 226, 0.55),
+      inset 0 1px 1px rgba(255, 255, 255, 0.55),
+      0 0 10px rgba(138, 43, 226, 0.45),
+      0 0 20px rgba(138, 43, 226, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(138, 43, 226, 0.6);
+    background: rgba(138, 43, 226, 0.1);
+  }
+  50% {
+    box-shadow: 
+      inset 0 0 20px rgba(138, 43, 226, 0.8),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.65),
+      0 0 18px rgba(138, 43, 226, 0.75),
+      0 0 35px rgba(138, 43, 226, 0.45),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(138, 43, 226, 0.9);
+    background: rgba(138, 43, 226, 0.18);
+  }
+}
+
+@keyframes neonGlowPink {
+  0%, 100% {
+    box-shadow: 
+      inset 0 0 12px rgba(217, 70, 255, 0.55),
+      inset 0 1px 1px rgba(255, 255, 255, 0.55),
+      0 0 10px rgba(217, 70, 255, 0.45),
+      0 0 20px rgba(217, 70, 255, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(217, 70, 255, 0.6);
+    background: rgba(217, 70, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      inset 0 0 20px rgba(217, 70, 255, 0.8),
+      inset 0 1px 1.5px rgba(255, 255, 255, 0.65),
+      0 0 18px rgba(217, 70, 255, 0.75),
+      0 0 35px rgba(217, 70, 255, 0.45),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(217, 70, 255, 0.9);
+    background: rgba(217, 70, 255, 0.18);
+  }
+}
+
+@keyframes neonGlowRGBFlow {
+  0%, 100% {
+    box-shadow: 
+      inset 0 0 15px rgba(0, 229, 255, 0.6),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      0 0 12px rgba(0, 229, 255, 0.45),
+      0 0 24px rgba(0, 229, 255, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(0, 229, 255, 0.7);
+    background: rgba(0, 229, 255, 0.12);
+  }
+  25% {
+    box-shadow: 
+      inset 0 0 15px rgba(77, 91, 255, 0.6),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      0 0 12px rgba(77, 91, 255, 0.45),
+      0 0 24px rgba(77, 91, 255, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(77, 91, 255, 0.7);
+    background: rgba(77, 91, 255, 0.12);
+  }
+  50% {
+    box-shadow: 
+      inset 0 0 15px rgba(138, 43, 226, 0.6),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      0 0 12px rgba(138, 43, 226, 0.45),
+      0 0 24px rgba(138, 43, 226, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(138, 43, 226, 0.7);
+    background: rgba(138, 43, 226, 0.12);
+  }
+  75% {
+    box-shadow: 
+      inset 0 0 15px rgba(217, 70, 255, 0.6),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5),
+      0 0 12px rgba(217, 70, 255, 0.45),
+      0 0 24px rgba(217, 70, 255, 0.25),
+      0 3px 6px rgba(0, 0, 0, 0.35);
+    border-color: rgba(217, 70, 255, 0.7);
+    background: rgba(217, 70, 255, 0.12);
+  }
+}
+
+.keycap-cyan {
+  animation: neonGlowCyan 3s ease-in-out infinite;
+}
+
+.keycap-blue {
+  animation: neonGlowBlue 3.2s ease-in-out infinite;
+}
+
+.keycap-purple {
+  animation: neonGlowPurple 3.5s ease-in-out infinite;
+}
+
+.keycap-pink {
+  animation: neonGlowPink 2.8s ease-in-out infinite;
+}
+
+.keycap-rgb-flow {
+  animation: neonGlowRGBFlow 6s linear infinite;
+}
+
+/* Key text shadow layer */
+.keycap-text {
+  position: relative;
+  z-index: 10;
+  color: #ffffff;
+  font-weight: 800;
+  text-shadow: 
+    0 1px 4px rgba(0, 0, 0, 0.9), 
+    0 0 6px rgba(255, 255, 255, 0.65),
+    0 0 12px rgba(255, 255, 255, 0.25);
+}
+
+/* Keyboard Container Underglow Layer with +70% stronger ambient light */
+@keyframes rgbUnderglow {
+  0%, 100% {
+    box-shadow: 0 20px 50px rgba(0, 229, 255, 0.55), 0 4px 20px rgba(0, 229, 255, 0.3);
+  }
+  33% {
+    box-shadow: 0 20px 50px rgba(77, 91, 255, 0.55), 0 4px 20px rgba(77, 91, 255, 0.3);
+  }
+  66% {
+    box-shadow: 0 20px 50px rgba(138, 43, 226, 0.55), 0 4px 20px rgba(138, 43, 226, 0.3);
+  }
+}
+
+.breezy_keyboard_container {
+  background: rgba(10, 11, 16, 0.9) !important;
+  border-top: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 0 1.5rem 1.5rem;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 -10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.keyboard-underglow-effect {
+  position: relative;
+}
+.keyboard-underglow-effect::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 5%;
+  width: 90%;
+  height: 12px;
+  background: transparent;
+  border-radius: 100px;
+  animation: rgbUnderglow 6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+  filter: blur(18px);
+}
+
+/* Neon glow for dashboard glass panels on active */
+div[class*="backdrop-blur"]:active,
+button[class*="backdrop-blur"]:active {
+  animation: neonRainbowPulse 1s linear infinite !important;
+  transition: all 0.05s ease !important;
+}

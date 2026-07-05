@@ -1,0 +1,6 @@
+{
+  "name": "BreezyKeyboard",
+  "description": "The only keyboard you'll ever need. A completely free, full-stack AI-powered Android keyboard simulator and dashboard, showcasing real-time multilingual next-word predictions, voice transcription cleanup, cyber-protect scanners, automated styling themes, and advanced writing shortcuts.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

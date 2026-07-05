@@ -1,0 +1,51 @@
+{
+  "collections": {
+    "users": {
+      "description": "User profiles and settings",
+      "fields": {
+        "userId": "string",
+        "email": "string",
+        "displayName": "string",
+        "points": "number",
+        "streak": "number",
+        "totalPoints": "number",
+        "achievements": "array",
+        "aiSettings": "object",
+        "createdAt": "timestamp",
+        "updatedAt": "timestamp"
+      }
+    },
+    "ai_history": {
+      "description": "History of AI assistant interactions",
+      "fields": {
+        "userId": "string",
+        "prompt": "string",
+        "response": "string",
+        "action": "string",
+        "isThinking": "boolean",
+        "isFavorite": "boolean",
+        "createdAt": "timestamp"
+      }
+    },
+    "learning_progress": {
+      "description": "Tracking user typing speed and lessons",
+      "fields": {
+        "userId": "string",
+        "lessonId": "string",
+        "wpm": "number",
+        "accuracy": "number",
+        "completedAt": "timestamp"
+      }
+    },
+    "saved_prompts": {
+      "description": "User's favorite or custom prompts",
+      "fields": {
+        "userId": "string",
+        "title": "string",
+        "category": "string",
+        "prompt": "string",
+        "createdAt": "timestamp"
+      }
+    }
+  }
+}

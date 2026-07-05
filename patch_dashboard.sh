@@ -1,0 +1,1 @@
+sed -i '120i\  // Theme Preview States\n  const [previewThemeId, setPreviewThemeId] = useState<string>(activeThemeId);\n  const [previewFontId, setPreviewFontId] = useState<string>(activeFontId);' src/components/DashboardApp.tsx
