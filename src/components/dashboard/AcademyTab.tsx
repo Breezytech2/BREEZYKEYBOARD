@@ -21,13 +21,12 @@ export const AcademyTab: React.FC = () => {
       try {
         const q = query(
           collection(db, "learning_progress"),
-          where("userId", "==", auth.currentUser.uid),
-          orderBy("completedAt", "asc")
+          where("userId", "==", auth.currentUser.uid)
         );
         
         const snapshot = await getDocs(q);
         
-        const data: WpmData[] = [];
+        let data: WpmData[] = [];
         snapshot.docs.forEach(doc => {
           const docData = doc.data();
           if (docData.completedAt && docData.wpm > 0) {
@@ -35,10 +34,14 @@ export const AcademyTab: React.FC = () => {
             const dateStr = `${date.getMonth() + 1}/${date.getDate()}`;
             data.push({
               date: dateStr,
-              wpm: docData.wpm
-            });
+              wpm: docData.wpm,
+              timestamp: docData.completedAt.seconds
+            } as any);
           }
         });
+        
+        // Sort by timestamp client-side to avoid needing a Firestore composite index
+        data = data.sort((a: any, b: any) => a.timestamp - b.timestamp);
 
         if (data.length > 0) {
           // Group by date and average if multiple entries per day
