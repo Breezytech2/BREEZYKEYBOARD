@@ -1,10 +1,10 @@
 {
-  "projectId": "regal-scanner-db34d",
-  "appId": "1:274872214686:web:4dcac623d2672cf0a5478f",
-  "apiKey": "AIzaSyDO5LR9BEvM1Ck_Pbs_4hhRVjzqFyxtBJs",
-  "authDomain": "regal-scanner-db34d.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-breezykeyboard-9bb9fed6-2ff1-4a24-a224-3007179cca07",
-  "storageBucket": "regal-scanner-db34d.firebasestorage.app",
-  "messagingSenderId": "274872214686",
+  "projectId": "breezykeyboard",
+  "appId": "1:1075481955025:web:96ad8459922dcedf7d93f0",
+  "apiKey": "AIzaSyDGCuwF4uutrdmuw4gYrx9GymNYApVvd78",
+  "authDomain": "breezykeyboard.firebaseapp.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "breezykeyboard.firebasestorage.app",
+  "messagingSenderId": "1075481955025",
   "measurementId": ""
 }

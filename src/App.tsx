@@ -23,7 +23,7 @@ import {
   dbContainer,
   defaultDb
 } from "./lib/firebase";
-import { doc, onSnapshot, setDoc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot, setDoc, getDoc, getDocFromServer } from "firebase/firestore";
 import { setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
 import {
   Sparkles,
@@ -45,6 +45,28 @@ export default function App() {
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [apiKeyStatus, setApiKeyStatus] = useState<"checking" | "online" | "offline">("checking");
   const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    console.log("Current Firebase project ID:", auth.app.options.projectId);
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      console.log("Authentication status:", u ? `Logged in as ${u.uid}` : "Not logged in");
+    });
+    
+    getDocFromServer(doc(db, "test", "connection")).then(() => {
+      console.log("Firestore connection status: Connected");
+    }).catch((err) => {
+      if (err.message && err.message.includes("offline")) {
+        console.log("Firestore connection status: Offline");
+      } else if (err.code === "permission-denied") {
+        console.log("Firestore connection status: Connected (Permission Denied for test doc)");
+      } else {
+        console.log("Firestore connection status: Error", err.message);
+      }
+    });
+    
+    return () => unsubscribe();
+  }, []);
+
   const [loading, setLoading] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -53,6 +75,58 @@ export default function App() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+  // Email verification tracking states and helpers
+  const [verifying, setVerifying] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [verificationSuccess, setVerificationSuccess] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  const handleCheckVerification = async () => {
+    setVerifying(true);
+    setVerificationError(null);
+    setVerificationSuccess(null);
+    try {
+      if (auth.currentUser) {
+        await auth.currentUser.reload();
+        const updatedUser = auth.currentUser;
+        if (updatedUser.emailVerified) {
+          setUser({ ...updatedUser }); // Trigger state update
+          setVerificationSuccess("Email verified successfully! Loading your dashboard...");
+        } else {
+          setVerificationError("Verification is still pending. Please click the link in your email and try again.");
+        }
+      }
+    } catch (err: any) {
+      console.error("Error checking verification:", err);
+      setVerificationError("Failed to check status: " + (err.message || err));
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setVerificationError(null);
+    setVerificationSuccess(null);
+    try {
+      if (auth.currentUser) {
+        await sendEmailVerification(auth.currentUser);
+        setVerificationSuccess("A fresh verification link has been sent to your email inbox.");
+        setResendCooldown(30); // 30 seconds cooldown
+      }
+    } catch (err: any) {
+      console.error("Error resending verification:", err);
+      setVerificationError(err.message || "Failed to resend verification email.");
+    }
+  };
 
   // Self-healing Firestore DB check on startup
   useEffect(() => {
@@ -167,8 +241,11 @@ export default function App() {
     if (code === "auth/too-many-requests" || msg.includes("too-many-requests")) {
       return "Too many unsuccessful attempts. Please try again later.";
     }
-    if (code === "auth/operation-not-allowed" || msg.includes("operation-not-allowed")) {
-      return "This sign-in method is not enabled. Please enable Email/Password (and Anonymous for Guest Mode) in your Firebase Console under Authentication > Sign-in method, or sign in using Google.";
+    if (code === "auth/operation-not-allowed" || msg.includes("operation-not-allowed") || code === "auth/admin-restricted-operation" || msg.includes("admin-restricted-operation")) {
+      return "This sign-in method is not enabled. Please enable Email/Password and Anonymous in your Firebase Console under Authentication > Sign-in method.";
+    }
+    if (code === "auth/unauthorized-domain" || msg.includes("unauthorized-domain")) {
+      return "This domain is not authorized for Google Auth. Please add the app URL to your Firebase Console under Authentication > Settings > Authorized domains.";
     }
     return "Something went wrong. Please check your credentials or connection and try again.";
   };
@@ -403,6 +480,87 @@ export default function App() {
               </button>
             </>
           )}
+        </motion.div>
+      </div>
+    );
+  }
+
+  // Check if email verification is pending (for email/password users)
+  if (user && !user.isAnonymous && !user.emailVerified) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-slate-950 p-6 font-sans text-white relative overflow-hidden"
+        style={{
+          backgroundImage: `url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=2075&q=80')`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed',
+        }}
+      >
+        <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-2xl z-0" />
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }} 
+          animate={{ opacity: 1, scale: 1 }} 
+          className="w-full max-w-md bg-white/10 backdrop-blur-2xl p-8 rounded-3xl border border-white/20 shadow-2xl space-y-6 z-10"
+        >
+          <div className="text-center space-y-3">
+            <div className="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/10">
+              <AlertCircle className="w-8 h-8 text-amber-400 animate-pulse" />
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight text-white">Email Verification Required</h2>
+            <p className="text-xs text-white/70 leading-relaxed">
+              We've sent a verification link to secure your BreezyKeyboard profile. Please check your inbox and click the verification link.
+            </p>
+            <div className="inline-block px-3.5 py-1.5 bg-white/5 border border-white/10 rounded-full font-mono text-xs text-cyan-300 font-bold tracking-wider">
+              {user.email}
+            </div>
+          </div>
+
+          {verificationError && (
+            <div className="p-3 bg-rose-500/20 border border-rose-500/35 rounded-xl flex items-start space-x-2.5 text-xs text-rose-200">
+              <XCircle className="w-4 h-4 shrink-0 mt-0.5 text-rose-400" />
+              <span>{verificationError}</span>
+            </div>
+          )}
+
+          {verificationSuccess && (
+            <div className="p-3 bg-emerald-500/20 border border-emerald-500/35 rounded-xl flex items-start space-x-2.5 text-xs text-emerald-200">
+              <UserCheck className="w-4 h-4 shrink-0 mt-0.5 text-emerald-400" />
+              <span>{verificationSuccess}</span>
+            </div>
+          )}
+
+          <div className="space-y-3 pt-2">
+            <button 
+              onClick={handleCheckVerification}
+              disabled={verifying}
+              className="w-full p-3 bg-cyan-500 hover:bg-cyan-600 disabled:bg-cyan-500/50 rounded-xl font-bold text-sm transition-all shadow-lg active:scale-95 flex items-center justify-center space-x-2 text-white cursor-pointer"
+            >
+              {verifying ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Checking status...</span>
+                </>
+              ) : (
+                <span>I Have Verified My Email</span>
+              )}
+            </button>
+
+            <button 
+              onClick={handleResendVerification}
+              disabled={resendCooldown > 0}
+              className="w-full p-3 bg-white/5 hover:bg-white/10 disabled:bg-white/5 disabled:opacity-50 rounded-xl font-bold text-xs border border-white/10 transition-all text-white cursor-pointer"
+            >
+              {resendCooldown > 0 ? `Resend Link in ${resendCooldown}s` : "Resend Verification Link"}
+            </button>
+
+            <button 
+              onClick={() => signOut(auth)}
+              className="w-full p-3 bg-transparent hover:bg-white/5 rounded-xl font-medium text-xs text-white/55 hover:text-white transition-all flex items-center justify-center space-x-1.5 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sign Out / Switch Account</span>
+            </button>
+          </div>
         </motion.div>
       </div>
     );

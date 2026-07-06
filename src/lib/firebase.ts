@@ -12,22 +12,13 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification
 } from "firebase/auth";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDO5LR9BEvM1Ck_Pbs_4hhRVjzqFyxtBJs",
-  authDomain: "regal-scanner-db34d.firebaseapp.com",
-  projectId: "regal-scanner-db34d",
-  storageBucket: "regal-scanner-db34d.firebasestorage.app",
-  messagingSenderId: "274872214686",
-  appId: "1:274872214686:web:4dcac623d2672cf0a5478f"
-};
+import firebaseConfig from "../../firebase-applet-config.json";
 
 // Initialize Firebase once
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-
 export const defaultDb = getFirestore(app);
-export const customDb = getFirestore(app, "ai-studio-breezykeyboard-9bb9fed6-2ff1-4a24-a224-3007179cca07");
+export const customDb = getFirestore(app, firebaseConfig.firestoreDatabaseId && firebaseConfig.firestoreDatabaseId !== "(default)" ? firebaseConfig.firestoreDatabaseId : undefined);
 
 // Export a mutable reference container so we can fall back dynamically
 export const dbContainer = {

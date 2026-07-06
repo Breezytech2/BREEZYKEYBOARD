@@ -224,15 +224,21 @@ export const AndroidMockup: React.FC<AndroidMockupProps> = ({
 
   // Load AI history from Firestore when authenticated
   useEffect(() => {
+    let unsubscribeHistory: () => void;
+    
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
+      // Clean up previous listener if it exists
+      if (unsubscribeHistory) {
+        unsubscribeHistory();
+      }
+      
       if (user) {
         const q = query(
           collection(db, "ai_history"),
-          where("userId", "==", user.uid),
-          orderBy("createdAt", "desc")
+          where("userId", "==", user.uid)
         );
         
-        const unsubscribeHistory = onSnapshot(q, (snapshot) => {
+        unsubscribeHistory = onSnapshot(q, (snapshot) => {
           const historyData = snapshot.docs.map(doc => {
             const data = doc.data();
             const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
@@ -240,21 +246,27 @@ export const AndroidMockup: React.FC<AndroidMockupProps> = ({
               id: doc.id,
               prompt: data.prompt || "",
               response: data.response || "",
-              date: dateStr
+              date: dateStr,
+              timestamp: data.createdAt ? data.createdAt.seconds : 0
             };
-          });
+          }).sort((a, b) => b.timestamp - a.timestamp);
           setAiHistory(historyData);
         }, (error) => {
           console.error("Error fetching AI history from Firestore:", error);
         });
 
-        return () => unsubscribeHistory();
+        
       } else {
         setAiHistory([]);
       }
     });
 
-    return () => unsubscribeAuth();
+    return () => {
+      unsubscribeAuth();
+      if (unsubscribeHistory) {
+        unsubscribeHistory();
+      }
+    };
   }, []);
 
   // Notes Handlers

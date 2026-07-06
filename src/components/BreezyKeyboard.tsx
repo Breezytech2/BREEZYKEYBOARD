@@ -1332,15 +1332,14 @@ export const BreezyKeyboard: React.FC<BreezyKeyboardProps> = ({
     >
       <div className="absolute inset-0 bg-gradient-to-tr from-white/20 via-transparent to-white/10 animate-pulse pointer-events-none opacity-80" />
       {/* 1. TOP DOCK / SEARCH SHUTTLES / AI BAR */}
-      <div className="w-full h-11 border-b border-white/20 flex items-center justify-center px-2 bg-white/5 backdrop-blur-md relative z-20 shadow-sm">
+      <div className="w-full h-11 border-b border-white/20 flex items-center justify-end px-3 bg-white/5 backdrop-blur-md relative z-20 shadow-sm">
         <div className="flex items-center space-x-6 py-1">
           <button
             onClick={onOpenSettings}
-            className="p-1.5 rounded-xl flex items-center space-x-2 text-xs text-white/70 hover:text-white hover:bg-white/10 transition-all"
+            className="p-1.5 rounded-xl flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 transition-all"
             title="Keyboard Settings"
           >
             <Settings className="w-5 h-5" />
-            <span className="font-semibold">Settings</span>
           </button>
         </div>
       </div>
